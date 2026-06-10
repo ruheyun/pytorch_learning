@@ -149,5 +149,87 @@ def fast_standardize(X):
     return X_std
 
 
+def train_test_split(X, y, test_size=0.5, shuffle=True, seed=None):
+    """
+    Split the data into train and test sets
+    """
+
+    if shuffle:
+        X, y = shuffle_data(X, y, seed)
+
+    split_i = len(y) - int(len(y) // (1 / test_size))
+    X_train, X_test = X[:split_i], X[split_i:]
+    y_train, y_test = y[:split_i], y[split_i:]
+
+    return X_train, X_test, y_train, y_test
+
+
+def k_fold_cross_validation_sets(X, y, k, shuffle=True):
+    """
+    Split the data into k sets of training / test data
+    """
+
+    if shuffle:
+        X, y = shuffle_data(X, y)
+
+    n_samples = len(y)
+    left_overs = {}
+    n_left_overs = (n_samples % k)
+    if n_left_overs != 0:
+        left_overs['X'] = X[-n_left_overs:]
+        left_overs['y'] = y[-n_left_overs:]
+        X = X[:-n_left_overs]
+        y = y[:-n_left_overs]
+
+    X_split = np.split(X, k)
+    y_split = np.split(y, k)
+    sets = []
+    for i in range(k):
+        X_test, y_test = X_split[i], y_split[i]
+        X_train = np.concatenate(X_split[:i] + X_split[i+1:], axis=0)
+        y_train = np.concatenate(y_split[:i] + y_split[i+1:], axis=0)
+        sets.append([X_train, X_test, y_train, y_test])
+
+    # if n_left_overs != 0:
+    #     np.append(sets[-1][0], left_overs['X'], axis=0)
+    #     np.append(sets[-1][2], left_overs['y'], axis=0)
+
+    return np.array(sets)
+
+
+def to_categorical(x, n_col=None):
+    """
+    One-hot encoding of nominal values
+    """
+
+    if not n_col:
+        n_col = np.amax(x) + 1
+    
+    one_hot = np.zeros((x.shape[0], n_col))
+    one_hot[np.arange(x.shape[0]), x] = 1
+
+    return one_hot
+
+
+def to_nominal(x):
+    """
+    Conversion from one-hot encoding to nominal
+    """
+
+    return np.argmax(x, axis=1)
+
+
+def make_diagonal(x):
+    """
+    Converts a vector into an diagonal matrix
+    """
+
+    m = np.zeros((len(x), len(x)))
+    for i in range(len(m[0])):
+        m[i, i] = x[i]
+    
+    return m
+
+
 if __name__ == '__main__':
     polynomial_feature(np.array([[2]]), 2)
