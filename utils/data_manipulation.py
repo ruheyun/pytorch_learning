@@ -61,7 +61,7 @@ def fast_divide_on_feature(X, feature_i, threshold):
     return X[mask], X[~mask]
 
 
-def polynomial_feature(X, degree):
+def polynomial_features(X, degree):
     """
     Automatically expand the original features into all polynomial combination features
     """
@@ -232,4 +232,4 @@ def make_diagonal(x):
 
 
 if __name__ == '__main__':
-    polynomial_feature(np.array([[2]]), 2)
+    polynomial_features(np.array([[2]]), 2)
