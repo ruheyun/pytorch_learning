@@ -116,6 +116,64 @@ class LinearRegression(Regression):
             super().fit(X, y)
 
 
+class LassoRegression(Regression):
+    """
+    Linear regression model with a regularization factor which does both variable selection
+    and regularization. Model that tries to balance the fit of the model with respect to the
+    training data and the complexity of the model. A large regularization factor with decreases
+    the variance of the model and do para.
+    Parameters:
+    degree: int. The degree of the polynomial that the independent variable X will be transformed to.
+    reg_factor: float. The factor that will determine the amount of regularization and feature shrinkage.
+    n_iterations: float. The number of training iterations the algorithm will tune the weights for.
+    learning_rate: float. The step length that will be used when updating the weights.
+    """
+
+    def __init__(self, degree, reg_factor, n_iterations, learning_rate):
+        super().__init__(n_iterations, learning_rate)
+        self.degree = degree
+        self.regularization = l1_regularization(alpha=reg_factor)
+        
+    def fit(self, X, y):
+        X = normalize(polynomial_features(X, degree=self.degree))
+        super().fit(X, y)
+
+    def predict(self, X):
+        X = normalize(polynomial_features(X, degree=self.degree))
+        return super().predict(X)
+    
+
+class PolynomialRegression(Regression):
+    """
+    Performs a non-linear transformation of the data before fitting the model and doing
+    predictions which allows for doing non-linear regression.
+    Parameters:
+    degree: int. The degree of the polynominal that the independent variable X will be transformed to.
+    n_iterations: float. The number of training iterations the algorithm will tune the weights for.
+    learning_rate: float. The step length that will be used when updating the weights.
+    """
+
+    def __init__(self, degree, n_iterations, learning_rate):
+        super().__init__(n_iterations, learning_rate)
+        self.degree = degree
+        self.regularization = lambda x: 0
+        self.regularization.grad = lambda x: 0
+
+    def fit(self, X, y):
+        X = polynomial_features(X, degree=self.degree)
+        super().fit(X, y)
+
+    def predict(self, X):
+        X = polynomial_features(X, degree=self.degree)
+        return super().predict(X)
+    
+
+class RidgeRegression(Regression):
+    """
+    
+    """
+
+
 
 
     
