@@ -170,8 +170,77 @@ class PolynomialRegression(Regression):
 
 class RidgeRegression(Regression):
     """
-    
+    Parameters:
+    -----------
+    reg_factor: float
+        The factor that will determine the amount of regularization and feature shrinkage.
+    n_iterations: float
+        The number of training iterations the algorithm will tune the weights for.
+    learning_rate: float
+        The step length that will be used when updating the weights.
     """
+
+    def __int__(self, reg_factor, n_iterations=1000, learning_rate=0.001):
+        self.regularization = l2_regularization(alpha=reg_factor)
+        super(RidgeRegression, self).__init__(n_iterations, learning_rate)
+
+
+class PolynomialRidgeRegression(Regression):
+    """
+    Parameters:
+    -----------
+    degree: int
+        The degree of the polynomial that the independent variable X will be transformed to.
+    reg_factor: float
+        The factor that will determine the amount of regularization and feature shrinkage.
+    n_iterations: float
+        The number of training iterations the algorithm will tune the weights for.
+    learning_rate: float
+        The step length that will be used when updating the weights.
+    """
+
+    def __init__(self, degree, reg_factor, n_iterations=3000, learning_rate=0.01, gradient_descent=True):
+        self.degree = degree
+        self.regularization = l2_regularization(alpha=reg_factor)
+        super().__init__(n_iterations, learning_rate)
+
+    def fit(self, X, y):
+        X = normalize(polynomial_features(X, degree=self.degree))
+        super().fit(X, y)
+
+    def predict(self, X):
+        X = normalize(polynomial_features(X, degree=self.degree))
+        return super().predict(X)
+    
+
+class ElasticNet(Regression):
+    """
+    Parameters:
+    -----------
+    degree: int
+        The degree of the polynomial that the independent variable X will be transformed to.
+    reg_factor: float
+        The factor that will determine the amount of regularization and feature shrinkage.
+    l1_ration: float
+        Weights the contribution of l1 and l2 regularization.
+    n_iterations: float
+        The number of training iterations the algorithm will tune the weights for.
+    learning_rate: float
+        The step length that will be used when updating the weights.
+    """
+
+    def __int__(self, degree=1, reg_factor=0.05, l1_ratio=0.5, n_iterations=3000, learning_rate=0.01):
+        self.degree = degree
+        self.regularization = l1_l2_regularization(alpha=reg_factor, l1_ratio=l1_ratio)
+        super().__init__(n_iterations, learning_rate)
+    
+    def fit(self, X, y):
+        X = normalize(polynomial_features(X, degree=self.degree))
+        super().fit(X, y)
+
+    def predict(self, X):
+        X = normalize(polynomial_features(X, degree=self.degree))
+        return super().predict(X)
 
 
 
