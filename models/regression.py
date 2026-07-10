@@ -241,8 +241,4 @@ class ElasticNet(Regression):
     def predict(self, X):
         X = normalize(polynomial_features(X, degree=self.degree))
         return super().predict(X)
-
-
-
-
-    
+ 
